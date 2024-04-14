@@ -29,6 +29,6 @@ public class Peca {
 	// Retorna os atributos da peça
 		@Override
 		public String toString() {
-			return "Peça [Cor= " + cor + " Posição= " + posicao + "]";
+			return "Peça { Cor: " + cor + ", Posição: " + posicao + " }";
 		}
 }

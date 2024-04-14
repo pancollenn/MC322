@@ -90,8 +90,7 @@ public class CartaSorte {
 	// Retorna os atributos da carta
 	@Override
 	public String toString() {
-		return "CartaSorte [Id= " + id + " Descrição= " + descricao + " Movimento= " + movimento 
-				+ " Efeito= " + efeito + " Valor= " + valor + " Ação= " + acao + " Tempo= " + tempo 
-				+ " Restrição= " + restricao + "]";
+	    return "CartaSorte { Id: " + id + ", Descrição: " + descricao + ", Movimento: " + movimento + ", Efeito: " + efeito + ", Valor: " + valor + ", Ação: " + acao + ", Tempo: " + tempo + ", Restrição: " + restricao + " }";
+
 	}
 }
