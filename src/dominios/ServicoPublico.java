@@ -1,9 +1,11 @@
 package dominios;
 
+import lab01.Jogador;
+
 public class ServicoPublico extends Propriedade {
 
-	public ServicoPublico(int id, String nome, String proprietario, int preco, int aluguel) {
-		super(id, nome, proprietario, preco, aluguel);
+	public ServicoPublico(int id, String descricao, String nome, Jogador dono, int preco, int aluguel) {
+		super(id, descricao, nome, dono, preco, aluguel);
 	}
 	
 	// Métodos definidos para subclasse ServicoPublico

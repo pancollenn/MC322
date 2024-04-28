@@ -3,7 +3,7 @@ package lab01;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Funcoes {
+public class Validacoes {
 	// Checa se o cpf possui 11 dígitos
 	public static boolean tamanhoCorreto(String cpfNumerico) {
 		if (cpfNumerico.length() != 11) { // Se não possuir 11 dígitos, cpf é inválido

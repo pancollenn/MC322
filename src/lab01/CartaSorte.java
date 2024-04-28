@@ -1,8 +1,7 @@
 package lab01;
 
-public class CartaSorte {
-	private int id;
-	private String descricao;
+public class CartaSorte extends Carta {
+
 	private int movimento; // Quantas casas avançar ou voltar
 	private int efeito; // -1: negativo, 0: neutro; 1: positivo
 	private float valor; // Valor negativo para ser pago ao banco e positivo para receber do banco
@@ -11,9 +10,10 @@ public class CartaSorte {
 	private String restricao; // Condições de uso
 	
 	// Construtor
-	public CartaSorte(int id, String descricao, int movimento, int efeito, float valor, String acao, int tempo, String restricao) {
-		this.id = id;
-		this.descricao = descricao;
+	public CartaSorte(int id, String descricao, Jogador dono, int movimento, int efeito, float valor, String acao, int tempo, String restricao) {
+		
+		super(id, descricao);
+		this.dono = dono;
 		this.movimento = movimento;
 		this.efeito = efeito;
 		this.valor = valor;
@@ -23,21 +23,6 @@ public class CartaSorte {
 	}
 	
 	// Getters e Setters
-	public int getId() {
-		return id;
-	}
-	
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
 	
 	public int getMovimento() {
 		return movimento;
@@ -90,7 +75,10 @@ public class CartaSorte {
 	// Retorna os atributos da carta
 	@Override
 	public String toString() {
-	    return "CartaSorte { Id: " + id + ", Descrição: " + descricao + ", Movimento: " + movimento + ", Efeito: " + efeito + ", Valor: " + valor + ", Ação: " + acao + ", Tempo: " + tempo + ", Restrição: " + restricao + " }";
+	    return "CartaSorte { Id: " + id + ", Descrição: " + descricao + 
+	    		", Movimento: " + movimento + ", Efeito: " + efeito + 
+	    		", Valor: " + valor + ", Ação: " + acao + ", Tempo: " + 
+	    		tempo + ", Restrição: " + restricao + " }";
 
 	}
 }
