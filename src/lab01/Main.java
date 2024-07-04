@@ -1,44 +1,27 @@
 package lab01;
 
-import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import dominios.Propriedade;
+import dominios.SaldoInsuficienteException;
 import dominios.Estacao;
 import dominios.ServicoPublico;
 import dominios.Terreno;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SaldoInsuficienteException {
 		// Declaro o tabuleiro
 		Tabuleiro tabuleiro = new Tabuleiro(); 
 		
-		// Declaro as peças
-		Peca p1 = new Peca("Vermelho", 0);
-		
-		// Declaro o jogador 1 para testar as funções
-		Jogador j1 = new Jogador("Victor", "039.104.640-33", "victor@gmail.com", "foto", p1);
-		tabuleiro.addJogador(j1);
-		
-		// Declaro as cartas sorte
-		CartaSorte c1 = new CartaSorte(0, "Volte ao ponto de partida", null, 0, 0, 1000.00f , "Sem ação específica", 0, "Sem restrições");
-		
-		// Declaro as estações
-		Estacao e1 = new Estacao(0, "Sem descrição.", "Estação férrea", null, 500, 50);
-		tabuleiro.addPropriedade(e1);
-		
-		// Declaro os terrenos
-		Terreno t1 = new Terreno(10, "Sem descrição.", "Curitiba", null, 100, 10, 0, 50, 100, false);
-		tabuleiro.addPropriedade(t1);
-		
-		// Declaro os serviços públicos
-		ServicoPublico sp1 = new ServicoPublico(20, "Sem descrição.", "Encanação", null, 100, 10);
-		tabuleiro.addPropriedade(sp1);
-	
 		// Registro os jogadores
 		Scanner entrada = new Scanner(System.in);
-		while (true) {
-			System.out.println("Registre o jogador");
+		System.out.println("Numero de jogadores: ");
+		String numJogadoresStr = entrada.nextLine();
+		int numJogadores = Integer.parseInt(numJogadoresStr);
+		int k = 0;
+		while (k < numJogadores) {
+			System.out.println("Registre o jogador: ");
 			System.out.println("Nome: ");
 			String comando = entrada.next();
 			if (comando.equals("break")) {
@@ -68,6 +51,7 @@ public class Main {
 			
 			Jogador j = new Jogador(nome, cpf, email, foto, peca); 
 			tabuleiro.addJogador(j); // Adiciono o jogador ao tabuleiro
+			k++;
 		}
 		
 		// Imprimo os dados dos jogadores para checar se está tudo correto
@@ -75,32 +59,64 @@ public class Main {
 			System.out.println(tabuleiro.getJogadores().get(i));
 		}
 		
-		// Imprimo os dados de cada classe para checar se está correto
-		System.out.println(c1);
-		System.out.println(e1);
-		System.out.println(t1);
-		System.out.println(sp1);	
+		boolean jogoRolando = true;
 		
-		// Testo calcularAluguel()
-		e1.calcularAluguel();
-		t1.calcularAluguel();
-		sp1.calcularAluguel(5); // Caso tenha lançado 5 nos dados
-		
-		// Testo comprarPropriedade(), comprarCasa() e comprarHotel()
-		j1.comprarPropriedade(t1);
-		t1.comprarCasa(j1);
-		t1.comprarCasa(j1);
-		t1.comprarCasa(j1);
-		t1.comprarCasa(j1);
-		t1.comprarHotel(j1);
-		
-		// Confiro se os atributos de t1 foram atualizados
-		System.out.println(t1);
-		
-		// Listo as opções de ação
-		//menuAcoes(tabuleiro);
-		tabuleiro.menuAcoes(entrada);
-		
+		while (jogoRolando) { // Enquanto nenhum jogador tiver falido, o jogo continua
+			for (int id = 0; id < numJogadores; id++) {
+				System.out.println();
+				System.out.println("Vez do jogador de id: " + id);
+				
+				Jogador jogador = tabuleiro.getJogadores().get(id); // Jogador que esta na vez
+				
+				// Rolam os dados
+				
+				Random random = new Random();
+				int dado1 = random.nextInt(6) + 1; // Gera um numero aleatorio de 1 a 6
+				int dado2 = random.nextInt(6) + 1;
+				int totalDados = dado1 + dado2;
+
+				
+				System.out.println("Dados: " + dado1 + " + " + dado2 + " = " + totalDados);
+				String movePeca = String.format("%s move peca %s %d casas.", jogador.getNome(), jogador.getPeca().getCor(), totalDados);
+				tabuleiro.executarAcao(movePeca); // Salva a acao
+				
+				jogador.getPeca().moverJogador(totalDados, tabuleiro); // Move a peca de acordo com o numero tirado
+				
+				if (jogador.getPeca().getCasaAtual(tabuleiro) == null) { // Se parar em Carta Sorte, deve comprar uma carta sorte
+					
+					int indiceCartaSorte = random.nextInt(tabuleiro.getCartasSorte().size()); // Sorteia uma carta sorte para o jogador
+				    CartaSorte cs = tabuleiro.getCartasSorte().get(indiceCartaSorte);
+	    			System.out.println("Carta tipo: " + cs.tipo + ", " + cs.descricao);
+	    			String compraCartaSorte = String.format("%s compra carta tipo %s: %s", jogador.getNome(), cs.tipo, cs.descricao);
+					tabuleiro.executarAcao(compraCartaSorte); // Salva a acao
+    				if (cs.tipo == TipoCarta.SORTE) {
+    					int dinheiro = (int) (jogador.getDinheiro() + cs.getValor()); // Adiciona o valor ao saldo
+    					jogador.setDinheiro(dinheiro);
+    				}
+    				else if (cs.tipo == TipoCarta.REVES) {
+    					int dinheiro = (int) (jogador.getDinheiro() - cs.getValor()); // Retira o valor do saldo
+    					jogador.setDinheiro(dinheiro);
+    				}
+    				if (cs.getMovimento() != -1) {
+    					int novaCasa = cs.getMovimento();
+    					jogador.getPeca().setPosicao(novaCasa); // Move a peca ate a casa indicada
+    				}	    			
+	        	}
+				else if (jogador.getPeca().getCasaAtual(tabuleiro).getDono() != null && jogador.getPeca().getCasaAtual(tabuleiro).getDono() != jogador) { // Se cair em uma propriedade com outro dono deve pagar aluguel
+					System.out.println("Pague aluguel!");
+					Carta casaAtual = jogador.getPeca().getCasaAtual(tabuleiro);
+					if(!Aluguel.pagarAluguel(jogador, casaAtual, tabuleiro, totalDados)) { // O jogador paga o aluguel, se acabar o dinheiro acaba o jogo
+						jogoRolando = false;
+						String perdeu = String.format("%s faliu. Fim de jogo.", jogador.getNome());
+						tabuleiro.executarAcao(perdeu); // Salva a acao
+						break;
+					}
+				}
+	        	else {
+	        		tabuleiro.menuAcoes(entrada, jogador); // Menu de acoes para o jogador escolher o que fazer 
+				}
+			}
+		}
 		entrada.close();
 	}
 

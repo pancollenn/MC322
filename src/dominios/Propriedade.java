@@ -3,7 +3,7 @@ package dominios;
 import lab01.Carta;
 import lab01.Jogador;
 
-public class Propriedade extends Carta{
+public abstract class Propriedade extends Carta{
 	// Troquei para protected para subclasses poderem acessar
 	protected String nome;
 	protected int preco;
@@ -58,8 +58,7 @@ public class Propriedade extends Carta{
 	// Métodos das propriedades
 	
 	// Retorna o aluguel
-	public int calcularAluguel() { // Calcular se há monopólio ou construções
-		System.out.println("Aluguel de " + this.getNome() + ": " + this.aluguel);
+	public int calcularAluguel() { 
 		return this.aluguel;
 	}
 }

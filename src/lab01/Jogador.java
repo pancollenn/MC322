@@ -96,13 +96,35 @@ public class Jogador {
 	// Retorna os atributos do jogador
 	@Override
 	public String toString() {
-	    return "Jogador { Nome: " + nome + ", CPF: " + cpf + ", Email: " 
-	    		+ email + ", Foto: " + foto + ", ID: " + id + ", Dinheiro: " 
-	    		+ dinheiro + ", " + peca + " }";
+		StringBuilder texto = new StringBuilder();
+		texto.append("Nome: ").append(nome)
+		.append(", CPF: ").append(cpf)
+		.append(", Email: ").append(email)
+		.append(", Foto: ").append(foto)
+		.append(", ID: ").append(id)
+		.append(", Dinheiro: ").append(dinheiro)
+		.append(", Peca: ").append(peca.getCor())
+		.append("\n")
+		.append("Propriedades: ");
+		
+		for (Carta c : cartas) {
+			if (c instanceof Propriedade) {
+				Propriedade p = (Propriedade) c;
+				texto.append(p.getNome()).append(", ");
+			}
+		}
+		
+		// Remove a última vírgula e espaço, se houver
+        if (!cartas.isEmpty()) {
+            texto.setLength(texto.length() - 2);
+        }
+		
+	    return texto.toString();
 	}
 	
 	// Métodos dos Jogadores
 	
+	// O jogador compra a propriedade
 	public boolean comprarPropriedade(Propriedade p) {
 		if (dinheiro > p.getPreco()) {
 			dinheiro -= p.getPreco();
@@ -116,5 +138,11 @@ public class Jogador {
 			return false;
 		}
 		return true;
+	}
+	
+	// O jogador recebe uma carta de propriedade
+	public void distribuirCartas(Carta carta) {
+		cartas.add(carta);
+		System.out.println("Jogador " + nome + " recebeu propriedade: " + carta.getDescricao());
 	}
 }

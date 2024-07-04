@@ -1,6 +1,6 @@
 package lab01;
 
-public class Carta {
+public abstract class Carta {
 	public int id;
 	public String descricao;
 	public Jogador dono;
